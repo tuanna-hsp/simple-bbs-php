@@ -3,15 +3,15 @@
     include_once("database.php");
     
     $database = Database::getInstance();
+    $is_logged_in = isset($_SESSION['user']);
     
     $username = 'guest';
-    $is_logged_in = isset($_SESSION['user']);
     if ($is_logged_in) {
         $username = $_SESSION['user']['username'];
     }
     
     // Check if user has created a new post
-    if (isset($_POST) && $_POST['post']) {
+    if ($_POST['post']) {
         if ($is_logged_in) {
             $database->createPost($_SESSION['user']['user_id'], $_POST['post']);
         }
@@ -34,10 +34,9 @@
         </form>
         <br/><br/>
         
-        <ul>
         <?php foreach ($posts as $post) { ?>
-            <li><?php echo $post['content'] ?></li>
+            <a href="/post.php?post_id=<?php echo $post['post_id'] ?>"><?php echo $post['content'] ?></a>
+            <a href="/user.php?user_id=<?php echo $post['user_id'] ?>">By <?php echo $post['username'] ?></a><br>
         <?php } ?>
-        </ul>
     </body>
 </html>

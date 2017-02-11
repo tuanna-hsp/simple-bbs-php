@@ -1,5 +1,8 @@
 <?php
     
+    /*
+    ** Singleton class that handle all database interactions
+    */
     class Database {
         
         const DB_HOST = "localhost:3306";
@@ -85,8 +88,23 @@
             mysql_close($this->connection);
         }
         
+        function getUser($user_id) {
+            $sql = "SELECT * FROM user WHERE user_id=$user_id";
+            $result = mysql_query($sql, $this->connection);
+            if ($result) {
+                $user = mysql_fetch_assoc($result);
+                // Should not return user password
+                $user['password'] = "";
+                return $user;
+            }
+            else {
+                die("Couldn't find user: " . mysql_error());
+            }
+        }
+        
         function getPosts() {
-            $sql = "SELECT * FROM post";
+            $sql = "SELECT post.*, user.username " . 
+                    "FROM post LEFT OUTER JOIN user ON post.user_id = user.user_id ";
             $result = mysql_query($sql, $this->connection);
             $posts = array();
             $i = 0;
@@ -95,12 +113,54 @@
             return $posts;
         }
         
+        function getUserPosts($user_id) {
+            $sql = "SELECT * FROM post WHERE user_id=$user_id";
+            $result = mysql_query($sql, $this->connection);
+            $posts = array();
+            $i = 0;
+            while ($posts[$i++] = mysql_fetch_assoc($result));
+            
+            return $posts;
+        }
+        
+        function getPost($post_id) {
+            $sql = "SELECT * FROM post WHERE post_id=$post_id";
+            $result = mysql_query($sql, $this->connection);
+            if ($result) {
+                return mysql_fetch_assoc($result);
+            }
+            else {
+                die("Couldn't find post: " . mysql_error());
+            }
+        }
+        
         function createPost($user_id, $content) {
             $sql = "INSERT INTO post(content, user_id, created_at) " .
                     "VALUES('$content', $user_id, NOW())";
             $result = mysql_query($sql, $this->connection);
             if (!$result) {
                 die("Couldn't create post: " . mysql_error());
+            }
+        }
+        
+        function getComments($post_id) {
+            $sql = "SELECT comment.*, user.username " .
+                    "FROM comment LEFT OUTER JOIN user ON comment.user_id = user.user_id " . 
+                    "WHERE post_id=$post_id";
+            $result = mysql_query($sql, $this->connection);
+            $comments = array();
+            $i = 0;
+            while ($comments[$i++] = mysql_fetch_assoc($result));
+            
+            return $comments;
+        }
+        
+        function createComment($user_id, $post_id, $content) {
+            $sql = "INSERT INTO comment(content, user_id, post_id, created_at) " .
+                    "VALUES('$content', $user_id, $post_id, NOW())";
+            $result = mysql_query($sql, $this->connection);
+            if (!$result) {
+                die("Couldn't create comment: " . mysql_error());
             }
         }
     }
