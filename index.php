@@ -14,6 +14,9 @@
     if ($_POST['post']) {
         if ($is_logged_in) {
             $database->createPost($_SESSION['user']['user_id'], $_POST['post']);
+            // Redirect to prevent form resubmisstion
+            header("Location: /");
+            exit();
         }
         else {
             // Redirect to login page
@@ -36,6 +39,8 @@
     </head>
     <body>
         <div class="container">
+            <?php include("_header.php") ?>
+            
             <h1>Welcome '<?php echo $username ?>'</h1>
             <br/>
             <div class="post-form">
@@ -50,10 +55,13 @@
                 <?php foreach ($posts as $post) : if ($post) { ?>
                     <div class="post-item">
                         <a class="post-link" href="/post.php?post_id=<?php echo $post['post_id'] ?>">
-                            <?php echo $post['content'] ?></a>
+                            <?php echo substr($post['content'], 0, 40)."..." ?></a>
                             <?php echo " (".formatCount($post['view_count'], 'view').", ".formatCount($post['comment_count'], 'comment').")" ?>
-                        <a class="user-link" href="/user.php?user_id=<?php echo $post['user_id'] ?>">
-                            <?php echo "By '".$post['username']."' at ".$post['created_at'] ?></a><br> 
+                        
+                        <div style="float:right">
+                            <a class="user-link" href="/user.php?user_id=<?php echo $post['user_id'] ?>">
+                            <?php echo "By '".$post['username']."'" ?></a><?php  echo " at ".$post['created_at'] ?><br>
+                        </div> 
                     </div>
                 <?php } endforeach; ?>
             </div>

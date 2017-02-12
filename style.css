@@ -130,7 +130,7 @@ body {
     text-align: center;
 }
 .container {
-    padding-top: 100px;
+    padding-top: 50px;
     width: 60%;
     margin: auto;
 }
@@ -217,4 +217,25 @@ input:focus {
     border-width: 1px;
     border-color: rgba(255, 255, 255, 0.4);
     padding: 10px;
+}
+
+/* Header styles */
+.header {
+    width: 100%;
+    margin-bottom: 50px;
+}
+.header-left {
+    float: left;
+    width: 50%;
+}
+.header-right {
+    float: right;
+    width: 50%;
+    text-align: right;
+}
+.header-link {
+    color: #fff;
+}
+.header-link:hover {
+    color: #add9ed;
 }

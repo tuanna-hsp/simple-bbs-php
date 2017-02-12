@@ -2,6 +2,9 @@
 <?php
     include_once("database.php");
     
+    if (isset($_REQUEST['logout'])) 
+        $_SESSION['user'] = NULL;
+    
     $database = Database::getInstance();
     $username = $_POST['username'];
     $password = $_POST['password'];

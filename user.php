@@ -23,6 +23,8 @@
     </head>
     <body>
         <div class="container">
+            <?php include("_header.php") ?>
+            
             <h2>Welcome to <?php echo $user['username'] ?>'s page</h2>
             <h2>All posts</h2>
             <div class="posts">

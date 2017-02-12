@@ -20,9 +20,14 @@
             // Otherwise
             $database->createComment(
                 $_SESSION['user']['user_id'], $post_id, $comment);
+                
+            // Redirect to prevent form resubmission
+            header("Location: ".$_SERVER['PHP_SELF'].'?'.$_SERVER['QUERY_STRING']);
+            exit();
         }
         
-        $post = $database->getPost($post_id);
+        // Get post and increase view count
+        $post = $database->getPost($post_id, TRUE);
         $comments = $database->getComments($post_id);
     }
     else {
@@ -37,6 +42,8 @@
     </head>
     <body>
         <div class="container">
+            <?php include("_header.php") ?>
+            
             <h2><?php echo "Posted by '".$post['username']."' at ".$post['created_at'] ?></h2>
             <div class="posts">
                 <p class="post-content"><?php echo $post['content'] ?></p>
