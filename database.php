@@ -102,6 +102,46 @@
             }
         }
         
+        function authenticate($username, $password) {
+            // Check if user exists (unsafe query)
+            $sql = "SELECT * FROM user " .
+                    "WHERE username='$username' AND password='$password' LIMIT 1";
+            $query_user_result = mysql_query($sql, $this->connection);
+            if ($query_user_result) {
+                $user = mysql_fetch_assoc($query_user_result);
+                $user['password'] = "";
+                return $user;
+            }
+            else {
+                die("Couldn't authenticate: " . mysql_error());
+            }
+        }
+        
+        function isUserExisted($username, $password) {
+            $sql = "SELECT count(user_id) AS total FROM user " .
+                    "WHERE username='$username' AND password='$password' LIMIT 1";
+            $result = mysql_query($sql, $this->connection);
+            if ($result) {
+                $user_count = mysql_fetch_assoc($result);
+                return $user_count;
+            }
+            else {
+                die("Error: " . mysql_error());
+            }
+        }
+        
+        function register($username, $password) {
+            $sql = "INSERT INTO user(username, password, join_date) " .
+                    "VALUES('$username', '$password', NOW())";
+            $create_user_result = mysql_query($sql, $this->connection);
+            if ($create_user_result) {
+                return authenticate($username, $password);
+            }
+            else {
+                die("Couldn't register new user: " . mysql_error());
+            }
+        }
+        
         function getPosts() {
             $sql = "SELECT post.*, user.username " . 
                     "FROM post LEFT OUTER JOIN user ON post.user_id = user.user_id ";
@@ -124,7 +164,9 @@
         }
         
         function getPost($post_id) {
-            $sql = "SELECT * FROM post WHERE post_id=$post_id";
+            $sql = "SELECT post.*, user.username " .
+                    " FROM post LEFT OUTER JOIN user ON post.user_id=user.user_id" . 
+                    " WHERE post_id=$post_id";
             $result = mysql_query($sql, $this->connection);
             if ($result) {
                 return mysql_fetch_assoc($result);
