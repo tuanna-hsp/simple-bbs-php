@@ -163,17 +163,22 @@
             return $posts;
         }
         
-        function getPost($post_id) {
+        function getPost($post_id, $update_view_count = FALSE) {
             $sql = "SELECT post.*, user.username " .
                     " FROM post LEFT OUTER JOIN user ON post.user_id=user.user_id" . 
                     " WHERE post_id=$post_id";
             $result = mysql_query($sql, $this->connection);
-            if ($result) {
-                return mysql_fetch_assoc($result);
-            }
-            else {
+            if (!$result) {
                 die("Couldn't find post: " . mysql_error());
             }
+            $post = mysql_fetch_assoc($result);
+            
+            if ($update_view_count) {
+                $sql = "UPDATE post SET view_count=(view_count+1) WHERE post_id=$post_id";
+                mysql_query($sql, $this->connection);
+            }
+            
+            return $post;
         }
         
         function createPost($user_id, $content) {
@@ -188,7 +193,7 @@
         function getComments($post_id) {
             $sql = "SELECT comment.*, user.username " .
                     "FROM comment LEFT OUTER JOIN user ON comment.user_id = user.user_id " . 
-                    "WHERE post_id=$post_id";
+                    "WHERE post_id=$post_id ORDER BY created_at DESC";
             $result = mysql_query($sql, $this->connection);
             $comments = array();
             $i = 0;
@@ -204,6 +209,10 @@
             if (!$result) {
                 die("Couldn't create comment: " . mysql_error());
             }
+            
+            // Update comment count for post
+            $sql = "UPDATE post SET comment_count=(comment_count+1) WHERE post_id=$post_id";
+            mysql_query($sql, $this->connection);
         }
     }
 ?>

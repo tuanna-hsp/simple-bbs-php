@@ -23,6 +23,12 @@
     }
     
     $posts = $database->getPosts();
+    
+    // Simple function to add 's' after noun if amount > 1
+    function formatCount($amount, $type) {
+        $formatted = $amount > 1 ? $type.'s' : $type;
+        return "$amount $formatted";
+    }
 ?>
 <html>
     <head>
@@ -42,8 +48,13 @@
             <h1>Recent posts</h1>
             <div class="posts">
                 <?php foreach ($posts as $post) : if ($post) { ?>
-                    <a class="post-link" href="/post.php?post_id=<?php echo $post['post_id'] ?>"><?php echo $post['content'] ?></a>
-                    <a class="user-link" href="/user.php?user_id=<?php echo $post['user_id'] ?>">By <?php echo $post['username'] ?></a><br> 
+                    <div class="post-item">
+                        <a class="post-link" href="/post.php?post_id=<?php echo $post['post_id'] ?>">
+                            <?php echo $post['content'] ?></a>
+                            <?php echo " (".formatCount($post['view_count'], 'view').", ".formatCount($post['comment_count'], 'comment').")" ?>
+                        <a class="user-link" href="/user.php?user_id=<?php echo $post['user_id'] ?>">
+                            <?php echo "By '".$post['username']."' at ".$post['created_at'] ?></a><br> 
+                    </div>
                 <?php } endforeach; ?>
             </div>
         </div>

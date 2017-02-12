@@ -52,7 +52,7 @@
                     <div class="comment-line">
                         <span class="comment"><?php echo $comment['content'] ?></span>
                         <a class="comment-link" href="/user.php?user_id=<?php echo $comment['user_id'] ?>">
-                            <?php echo "By '".$comment['username']."', ".$comment['created_at'] ?></a><br>
+                            <?php echo "By '".$comment['username']."'" ?></a><span style="color:#fff"><?php echo ", ".$comment['created_at'] ?></span><br>
                     </div>
                 <?php } ?>
             </div>
