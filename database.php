@@ -122,7 +122,7 @@
                     "WHERE username='$username' AND password='$password' LIMIT 1";
             $result = mysql_query($sql, $this->connection);
             if ($result) {
-                $user_count = mysql_fetch_assoc($result);
+                $user_count = mysql_fetch_assoc($result)['total'];
                 return $user_count;
             }
             else {
@@ -135,7 +135,7 @@
                     "VALUES('$username', '$password', NOW())";
             $create_user_result = mysql_query($sql, $this->connection);
             if ($create_user_result) {
-                return authenticate($username, $password);
+                return $this->authenticate($username, $password);
             }
             else {
                 die("Couldn't register new user: " . mysql_error());
